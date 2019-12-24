@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments/header :: head"></head>
+
+<div id="restante" onclick="hideSide()">
+</div>
+<div id="mysidebar" class="animated fadeInRight">
+	<div class="side-content">
+		<div class="side-header">
+			<a href="#" onclick="hideSide()">
+				<i class="fas fa-chevron-left" style="vertical-align: middle;"></i><span  th:text="#{back}"></span>
+			</a>
+		</div>
+		<div class="side-body navbar-nav conteudoNavbarSuportado">
+			<div sec:authorize="hasRole('ADMIN')">
+				<li class="nav-link navbar-text">
+			        <a class="nav-link dropdown-toggle" th:text="#{admin}" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
+			        <div class="dropdown2 animated flipInX collapse" id="collapseExample">
+			          <a class="dropdown-item hov-link" th:href="@{|/admin/manager/user|}" th:text="#{users}"></a>
+			          <a class="dropdown-item hov-link" th:href="@{|/admin/relatorio|}" th:text="#{reports}"></a>
+			          <a class="dropdown-item navbar-text hov-link" th:href="@{|/admin/uploadmenu|}" th:text="#{restaurantMenu}"></a>
+			        </div>			        
+
+		      	</li>
+	     	</div>
+			<div sec:authorize="hasRole('USER')">
+				<a class="nav-link navbar-text" th:href="@{|/recepcao|}" th:text="#{reception}"></a>
+			</div>
+			<div class="justify-content-end conteudoNavbarSuportado">
+				<div th:switch="${#authorization.expression('isAuthenticated()')}">
+					<div th:case="true">
+						<form name="logoutForm" th:action="@{/logout}" method="post">
+							<button type="submit" class="btn btn-link btn-logout navbar-text btn-ajuste">
+							Logout
+						</form>
+					</div>
+					<div th:case="false">
+						<form name="loginForm" th:action="@{/login}" method="get">
+							<button type="submit" class="btn btn-link btn-logout navbar-text btn-ajuste">
+							Login
+						</form>
+					</div>
+				</div>
+				
+				<a class="dropdown2 navbar-text" id="locales" onclick="teste()" href="#" th:text=#{lang.text}></a>
+			</div>
+			
+		</div>		
+	</div>
+</div>
+
+
+<nav class="navbar navbar-expand-lg">
+	<a class="navbar-brand" href="/">OverQueue</a>
+	<button onclick="showSide()" class="navbar-toggler text-center" type="button" data-toggle="dropdown" data-target=".conteudoNavbarSuportado" aria-controls="conteudoNavbarSuportado" aria-expanded="false" aria-label="Alterna navegação">
+		<span class="navbar-toggler-icon text-white sideMenu"><i class="fas fa-bars" style="vertical-align: middle;"></i></span>
+	</button>
+
+	<div id="navHide" class="collapse navbar-collapse row navbar-nav conteudoNavbarSuportado" style=" align-content: baseline;">
+		<div sec:authorize="hasRole('ADMIN')">
+			<li class="nav-link dropdown navbar-text show">
+		        <a class="nav-link dropdown-toggle" href="#" th:text="#{admin}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		        </a>
+		        <div class="dropdown-menu dropdown2" aria-labelledby="navbarDropdown">
+		          <a class="dropdown-item" th:href="@{|/admin/manager/user|}" th:text="#{users}"></a>
+		          <a class="dropdown-item" th:href="@{|/admin/relatorio|}" th:text="#{reports}"></a>
+		          <a class="dropdown-item navbar-text" th:href="@{|/admin/uploadmenu|}" th:text="#{restaurantMenu}"></a>
+		        </div>
+	      	</li>
+	     	</div>
+		<div sec:authorize="hasRole('USER')">
+			<a class="nav-link navbar-text" th:href="@{|/recepcao|}" th:text="#{reception}"></a>
+		</div>
+		<div class="collapse navbar-collapse justify-content-end conteudoNavbarSuportado">
+			<div th:switch="${#authorization.expression('isAuthenticated()')}">
+				<div th:case="true">
+					<form name="logoutForm" th:action="@{/logout}" method="post">
+						<button type="submit" class="btn btn-link btn-logout navbar-text">
+						Logout
+					</form>
+				</div>
+				<div th:case="false">
+					<form name="loginForm" th:action="@{/login}" method="get">
+						<button type="submit" class="btn btn-link btn-logout navbar-text">
+						Login
+					</form>
+				</div>
+			</div>
+
+			<a class="form-control dropdown2 col-lg-2 col-10 navbar-text" id="locales" onclick="teste()" href="#" th:text=#{lang.text}></a>
+<!-- 			<select class="form-control dropdown2 navbar-nav text-center fa" style="width:70px; font-size:30px" id="locales"> -->
+<!-- 				<option class="fa">&#xf1ab;</option> -->
+<!-- 				<option value="en" th:text="#{langEN}"></option> -->
+<!-- 				<option value="pt_BR" th:text="#{langPT}"></option> -->
+<!-- 			</select> -->
+			
+		</div>
+	</div>
+	
+</nav>
+<body>
+	<div>
+		<div layout:fragment="content"></div>
+		<div th:replace="fragments/footer :: footer"></div>
+	</div>
+</body>
+</html>

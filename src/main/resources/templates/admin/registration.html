@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml" layout:decorator="layouts/default">
+<div id="page" layout:fragment="content">
+
+	<div class="container card border-dark mb-5 mt-5 col-6"
+		id="registrationPage" style="padding: 20px;">
+
+		<h1 class="text-center" th:text="#{admin.user.newUser}"></h1>
+
+		<form action="#" th:action="@{/user/add}" th:object="${user}"
+			method="post">
+
+			<label class="font-weight-bold" th:text="#{admin.user.fullName}"></label>
+			<input class="form-control" type="text" th:field="*{name}" id="name" required> 
+			<label class="font-weight-bold" for="usrname" th:text="#{admin.user.user}"></label> <input class="form-control"
+				type="text" id="usrname" name="usrname" th:field="*{username}"
+				pattern=".{4,15}" required
+				th:title="#{admin.user.userNotCompliance}"> 
+			<label class="font-weight-bold" th:text="#{admin.user.phoneNumber}"></label>
+			<input class="form-control" type="number" th:field="*{phoneNumber}" required>
+			<label class="font-weight-bold" for="psw" th:text="#{admin.user.password}"></label>			
+			<input class="form-control" type="password" id="psw" name="psw"
+				th:field="*{password}"
+				pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,30}"
+				th:title="#{admin.user.passwordNotCompliance}" required> <label
+				class="font-weight-bold" th:text="#{admin.user.confirmPassword}"></label>
+			<input class="form-control" type="password" id="psw2" name="psw2"
+				th:field="*{passwordConfirm}" required> 
+
+			<div class="form-group">
+				<label class="font-weight-bold"
+					th:text="#{admin.user.userPrivilege}"></label> <select
+					class="form-control" th:field="*{role}">
+					<option th:value="ADMIN" th:text="Admin"></option>
+					<option th:value="USER" th:text="User"></option>
+				</select>
+			</div>
+
+			<input class="btn btn-dark form-control" type="submit" id="submit"
+				th:value="#{admin.user.Confirm}" disabled>
+		</form>
+	</div>
+
+	<div class="container card border-dark mb-5 mt-5 col-6" id="message"
+		style="padding: 20px;">
+		<h5 class="text-center" th:text="#{admin.user.requirements}"></h5>
+		<p id="userlength" class="invalid lead"
+			th:text="#{admin.user.req_usernameNumberOfChar}"></p>
+		<p id="letter" class="invalid lead"
+			th:text="#{admin.user.req_lowerCase}"></p>
+		<p id="capital" class="invalid lead"
+			th:text="#{admin.user.req_upperCase}"></p>
+		<p id="number" class="invalid lead" th:text="#{admin.user.req_number}"></p>
+		<p id="length" class="invalid lead"
+			th:text="#{admin.user.req_pwdNumberOfChar}"></p>
+	</div>
+
+	</body>

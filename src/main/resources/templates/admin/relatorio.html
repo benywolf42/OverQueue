@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org/" xmlns="http://www.w3.org/1999/xhtml" layout:decorator="layouts/default">
+<body style="background:#161719">
+	<div id="adminRelPage" layout:fragment="content" >
+<!-- 	<div class='page-link' style="background:#161719"> -->
+<!-- 		<a class="btn btn-success" th:href="@{|/admin|}" th:text="Admin"></a> -->
+<!-- 		<a class="btn btn-success" th:href="@{|/admin/usuario|}" th:text="Admin.Usuario"></a>  -->
+<!-- 		<a class="btn btn-success" th:href="@{|/admin/fila|}" th:text="Admin.Fila"></a> -->
+<!-- 	</div> -->
+
+	<header class="text-center">
+		<div class="overlay"></div>
+		<div class="" style="padding: 0px 110px 50px 110px;">
+		
+			<div class="row">
+				<div class="col-xl-9 mx-auto">
+					<h1 class="mb-5 text-white" th:text="#{admin.report.dashboardPanel}" style="padding: 20px;"></h1>
+				</div>
+			</div>
+			
+			<!-- PT-BR -->
+			<div class="row pt" style="margin-top: -1cm;">
+				<div class="col-12" style="display: inline-table; padding-left: 0;">
+					
+					<!-- COLABORADORES CADASTRADOS -->
+					<iframe class="col-sm-12 col-md-4" style="border:none" src="https://status.overqueue.tk/grafana/d-solo/3fI7D7KWk/brabotim-overqueue-adm-pt-br?orgId=1&refresh=10s&from=now%2Fd&to=now%2Fd&panelId=8" height="200"></iframe>
+
+					<!-- CLIENTES CADASTRADOS -->
+					<iframe class="col-sm-12 col-md-4" style="border:none" src="https://status.overqueue.tk/grafana/d-solo/3fI7D7KWk/brabotim-overqueue-adm-pt-br?orgId=1&refresh=10s&from=now%2Fd&to=now%2Fd&panelId=11" height="200"></iframe>
+				
+					<!-- TOTAL DE CLIENTES NO DIA -->
+					<iframe class="col-sm-12 col-md-4" style="border:none" src="https://status.overqueue.tk/grafana/d-solo/3fI7D7KWk/brabotim-overqueue-adm-pt-br?orgId=1&refresh=10s&from=now%2Fd&to=now%2Fd&panelId=4" height="200"></iframe>
+
+					<!-- CLIENTES PREFERENCIAIS NO MÊS -->
+					<iframe class="col-sm-12 col-md-6" style="border:none" src="https://status.overqueue.tk/grafana/d-solo/3fI7D7KWk/brabotim-overqueue-adm-pt-br?orgId=1&refresh=10s&from=now%2Fd&to=now%2Fd&panelId=7" height="200"></iframe>
+
+					<!-- CLIENTES NO DIA - COMPARAÇÃO DE STATUS -->
+					<iframe class="col-sm-12 col-md-6" style="border:none" src="https://status.overqueue.tk/grafana/d-solo/3fI7D7KWk/brabotim-overqueue-adm-pt-br?orgId=1&refresh=10s&from=now%2Fd&to=now%2Fd&panelId=10" height="200"></iframe>
+						
+					<!-- TEMPO MÉDIO DE ESPERA HOJE-->
+					<iframe class="col-12" style="border:none" src="https://status.overqueue.tk/grafana/d-solo/3fI7D7KWk/brabotim-overqueue-adm-pt-br?orgId=1&refresh=10s&from=now%2Fd&to=now%2Fd&panelId=13" height="450"></iframe>
+
+					<!-- TEMPO MÉDIO DE ESPERA POR DIA DA SEMANA -->
+					<iframe class="col-8" style="border:none" src="https://status.overqueue.tk/grafana/d-solo/3fI7D7KWk/brabotim-overqueue-adm-pt-br?orgId=1&refresh=10s&from=now%2Fd&to=now%2Fd&panelId=2" height="450"></iframe>
+
+					<!-- TOTAL DE CLIENTES POR DIA DA SEMANA -->
+					<iframe class="col-sm-12 col-md-4" style="border:none" src="https://status.overqueue.tk/grafana/d-solo/3fI7D7KWk/brabotim-overqueue-adm-pt-br?orgId=1&refresh=10s&from=now%2Fd&to=now%2Fd&panelId=9" height="450"></iframe>
+				</div>
+			</div>
+		</div>
+	</header>
+</body>
+</html>

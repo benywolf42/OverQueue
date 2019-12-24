@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" layout:decorator="layouts/default">
+
+<body>
+	<div id="receptionPage" layout:fragment="content">
+		
+		<!------------------------ CANCELAMENTO ----------------------->
+		<!-- SUCESSO -->
+		<div th:if="${param.successOnCancel}">
+			<div class="alert alert-success" th:text="#{reception.messages.cancelSuccess}"></div>
+		</div>
+		<!-- ERRO -->
+		<div th:if="${param.errorOnCancel}">
+			<div class="alert alert-danger" th:text="#{reception.messages.cancelFailed}"></div>
+		</div>
+		<!------------------------------------------------------------->
+		<!------------------------ CONFIRMACAO ------------------------>
+		<!-- ERRO -->
+		<div th:if="${param.errorOnConfirm}">
+			<div class="alert alert-danger" th:text="#{reception.messages.confirmationFailed}"></div>
+		</div>
+		<!------------------------------------------------------------->
+		<!------------------------ CHAMADA ---------------------------->
+		<!-- ERRO -->
+		<div th:if="${param.errorOnCall}">
+			<div class="alert alert-danger" th:text="#{reception.messages.costumerCallFailed}"></div>
+		</div>
+		<!------------------------------------------------------------->
+		
+		<!-------------------- INCLUSÃO NA FILA ----------------------->
+		<!-- ERRO -->
+		<div th:if="${param.errorUserOnQueue}">
+			<div class="alert alert-danger" th:text="#{reception.messages.userAlreadyInline}"></div>
+		</div>
+		
+		<div th:if="${conventionalQueues.isEmpty()}">
+			<div th:if="${priorityQueues.isEmpty()}">
+				<div class="alert alert-primary text-center">
+					<span th:text="#{reception.messages.emptyQueues}">Todas as filas estão vazias. Para adicionar um novo elemento, clique no botão inferior direito.</span>
+				</div>
+			</div>
+		</div>
+		
+		<div th:if="${param.errorParameters}">
+			<div class="alert alert-danger" th:text="#{reception.messages.invalidData}"></div>
+		</div>
+		
+		<!------------------------------------------------------------->
+			<!-- CARDS -->
+			<div class="row mt-4 d-flex justify-content-middle mr-2 ml-2">
+				<!-- Cards Normal -->
+				<div th:each="queue : ${conventionalQueues}">
+					<div>
+						<div class="card text-light mb-4 mt-2 ml-4" style="background-color: #918FA2;" th:styleappend="${queue.waitingOnQueueDuration <= 15 ? 'box-shadow: 0px 0px 16px 3px #89FF76;width:300px;min-height:336px' : queue.waitingOnQueueDuration <= 30 ? 'box-shadow: 0px 0px 16px 3px #FFF073;width:300px;min-height:336px' : 'box-shadow: 0px 0px 16px 3px #FF3838;width:300px;min-height:336px'}">
+							<div class="card-body text-center" style="padding-bottom: 3px;">
+								<h4 class="font-weight-bold" th:text="${queue.chairsQuantityOnTable} + ' ' + #{reception.chairs}"></h4> 
+								<span class="card-title" th:text="#{reception.waitTime} + ' ' + ${queue.waitingOnQueueDuration} + ' min'"></span>
+							</div>							
+							<div class="card-body"style=" padding-bottom: 5px; padding-top: 0px;">
+								<div th:id="'row' + ${queue.id} + ${queueElement.position}" class="card-footer bg-transparent border-light animated flipInX" th:classappend="${queueElement.position > 3 ? 'd-none' : ''}" th:each="queueElement : ${queue.pendingQueueElement}">
+									<div class="row">
+										<span th:id="'name' + ${queueElement.id}" class="animated fadeIn" style="margin-top:6px;" th:text="${queueElement.client.name}" th:onclick="|showPhoneNumber(${queueElement.id})|"></span>
+										<span th:id="'number' + ${queueElement.id}" class="animated fadeIn d-none" style="margin-top:6px;" th:text="${queueElement.client.phoneNumber}" th:onclick="|showName(${queueElement.id})|"></span>
+										<div style="position: fixed;left: 160px;bottom: 8px;">
+											<a th:href="@{/recepcao/queueElement/findOne(id=${queueElement.id})}" class="btnEditUser">
+												<button th:class="${queueElement.hasReceivedSms != 2 ? 'd-none' : 'btn btn-outline-light'}" onclick="stopReload()"><i class="fas fa-user-check"></i></button>
+											</a>
+											<a th:href="@{/recepcao/queueElement/call(id=${queueElement.id})}">
+												<button th:class="${queueElement.hasReceivedSms != 1 ? 'd-none' : 'btn btn-outline-light'}"><i class="fas fa-comment-alt"></i></button>
+											</a>
+											<a th:href="@{/recepcao/queueElement/findOne/(id=${queueElement.id})}" class="delete btnDeleteQE btn btn-outline-light" data-toggle="modal" data-target="#delModalA" onclick="stopReload()"><i class="fas fa-user-times" data-toggle="tooltip" title="Delete"></i></a>
+										</div>
+									</div>
+								</div>	
+								<div class="card-footer bg-transparent border-light text-center">
+									<span class="text-center" th:text="'+' + ${queue.pendingElementsOnQueue}"  th:classappend="${queue.pendingElementsOnQueue} > 0 ? '' : 'd-none'"></span>
+									<span th:id="${queue.id} + 'arrowDown'" class="fas fa-chevron-down" style="cursor:pointer" th:onclick="|showElements(${queue.id}, ${queue.pendingElementsOnQueue})|"  th:classappend="${queue.pendingElementsOnQueue} > 0 ? '' : 'd-none'"></span>
+									<span th:id="${queue.id} + 'arrowUp'" class="fas fa-chevron-up d-none" style="cursor:pointer" th:onclick="|hideElements(${queue.id}, ${queue.pendingElementsOnQueue})|"></span>
+								</div>
+							</div>
+						</div>
+				  	</div>
+				</div>
+				<!-- Cards Preferencial -->
+				<div th:each="queue : ${priorityQueues}">
+					<div class="card text-dark mb-4 mt-2 ml-4" style="background-color: #4EA9DC;" th:styleappend="${queue.waitingOnQueueDuration <= 15 ? 'box-shadow: 0px 0px 16px 3px #89FF76;width:300px;min-height:336px' : queue.waitingOnQueueDuration <= 30 ? 'box-shadow: 0px 0px 16px 3px #FFF073;width:300px;min-height:336px' : 'box-shadow: 0px 0px 16px 3px #FF3838;width:300px;min-height:336px'}">
+						<div class="card-body text-center text-light">
+							<h4 class="font-weight-bold" th:text="${queue.chairsQuantityOnTable} + ' ' + #{reception.chairs}"></h4><i class="fas fa-wheelchair"></i>
+							<span class="card-title" th:text="#{reception.waitTime} + ' ' + ${queue.waitingOnQueueDuration} + ' min'"></span>
+						</div>								
+				 		<div class="card-body text-white">
+							<div th:id="'row' + ${queue.id} + ${queueElement.position}" class="card-footer bg-transparent border-light animated flipInX" th:classappend="${queueElement.position > 3 ? 'd-none' : ''}" th:each="queueElement : ${queue.pendingQueueElement}">
+								<div class="row">
+									<span th:id="'name' + ${queueElement.id}" class="mr-auto animated fadeIn" th:text="${queueElement.client.name}" th:onclick="|showPhoneNumber(${queueElement.id})|"></span>
+									<span th:id="'number' + ${queueElement.id}" class="mr-auto d-none animated fadeIn" th:text="${queueElement.client.phoneNumber}" th:onclick="|showName(${queueElement.id})|"></span>
+									<div  style="position: fixed;left: 160px;bottom: 5px;">
+										<a th:href="@{/recepcao/queueElement/findOne(id=${queueElement.id})}" class="btnEditUser">
+											<button th:class="${queueElement.hasReceivedSms != 2 ? 'd-none' : 'btn btn-outline-light'}" onclick="stopReload()"><i class="fas fa-user-check"></i></button>
+										</a>
+										<a th:href="@{/recepcao/queueElement/call(id=${queueElement.id})}">
+											<button th:class="${queueElement.hasReceivedSms != 1 ? 'd-none' : 'btn btn-outline-light'}"><i class="fas fa-comment-alt"></i></button>
+										</a>
+										<a th:href="@{/recepcao/queueElement/findOne/(id=${queueElement.id})}" class="delete btnDeleteQE btn btn-outline-light" data-toggle="modal" data-target="#delModalA" onclick="stopReload()"><i class="fas fa-user-times" data-toggle="tooltip" title="Delete"></i></a>
+									</div>
+								</div>
+							</div>	
+							<div class="card-footer bg-transparent border-light text-center text-white">
+								<span class="text-center" th:text="'+' + ${queue.pendingElementsOnQueue}" th:classappend="${queue.pendingElementsOnQueue} > 0 ? '' : 'd-none'"></span>
+								<span th:id="${queue.id} + 'arrowDown'" class="fas fa-chevron-down" style="cursor:pointer" th:onclick="|showElements(${queue.id}, ${queue.pendingElementsOnQueue})|"  th:classappend="${queue.pendingElementsOnQueue} > 0 ? '' : 'd-none'"></span>
+								<span th:id="${queue.id} + 'arrowUp'" class="fas fa-chevron-up d-none" style="cursor:pointer" th:onclick="|hideElements(${queue.id}, ${queue.pendingElementsOnQueue})|"></span>
+							</div>
+					  	</div>
+			  		</div>
+				</div>
+			</div>
+
+			<!-- MODAL FILAS  -->
+			<div id="modalQueueElementView"></div>
+			
+			<!-- MODAL FILAS BASE -->
+			<div class="modal fade bd-example-modal-lg" id="modalQueueElement" th:fragment="modalQueueContents">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="card text-white bg-info">
+			        <div class="card-body text-center">
+			          <div class="titulo mb-2">
+			            <h5 class="card-title" th:text="#{reception.title}"></h5>
+			            <p class="card-text" th:text="#{reception.subtitle}"></p>
+			            <img th:src="@{/img/volunteer.png}">
+			          </div>
+			          <div class="card-footer bg-transparent border-secondary"  th:each="client : ${clients}">
+			            <div class="row">
+<!-- 			              <div class="col-8 mt-2 nome-modal" th:text=${queueElement.key}></div> -->
+			              <div class="col-8 mt-2 nome-modal" th:text=${client.name}></div>
+			              <div class="col-4 botao-modal">
+			                <button class="btn btn-success col-4" th:onclick="'javascript:openViewQueueElementModal(\'' + ${client.id} + '\');'"><i class="fas fa-eye"></i></button>
+			              </div>
+			            </div>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			
+			<!-- MODAL FILAS Deficiente ATUALIZAR -->
+			<div class="modal fade bd-example-modal-lg" id="modalEditQueue2">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="card text-white bg-dark">
+			        <div class="card-body text-center">
+			          <div class="titulo mb-2">
+			            <h5 class="card-title" th:text="#{reception.title}"></h5>
+			            <p class="card-text" th:text="#{reception.subtitle}"></p>
+			            <img th:src="@{/img/line.png}">
+			          </div>
+			          <div class="card-footer bg-transparent border-secondary">
+			            <div class="row">
+			              <span class="col-8 mt-2 nome-modal" th:text="#{reception.nameHere}"></span>
+			              <div class="col-4 botao-modal">
+			                <button class="btn btn-success col-4"><i class="fas fa-eye"></i></button>
+<!-- 			                <button class="btn btn-secondary col-4"><i class="fas fa-comment-alt"></i></button> -->
+<!-- 			                <button class="btn btn-danger col-4"><i class="fas fa-user-times"></i></button> -->
+			              </div>
+			            </div>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			</div>			
+			
+			<!-- MODAL VIEW ELEMENTO  -->
+			<div id="modalViewQueueElement"></div>
+			
+			<!-- MODAL VIEW ELEMENTO BASE -->
+			<div class="modal fade bd-example-modal-lg" id="modal3" th:fragment="modalViewQueueContents">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="card text-white bg-secondary">
+			        <div class="card-body text-center">
+			          <div class="titulo mb-2">
+			            <h5 class="card-title" th:text="#{reception.title}"></h5>
+			          </div>
+			          <div class="card-footer bg-transparent border-dark">
+			            <div class="row" th:each="client : ${clients}">
+<!-- 						  <div class="col-8 mt-2 nome-modal d-none" id="queueElementKey" th:text=${queueElement.key}></div> -->
+			              <div class="col-12 mt-2 nome-modal" th:text=${client.name}></div>
+			              
+			              <div class="col-12 d-flex">
+			                <button class="btn btn-success col-3 m-1" data-toggle="modal" data-target="#SaveModal"><i class="fas fa-save"></i></button>
+			                <button class="btn btn-danger col-3  m-1"  data-toggle="modal" data-target="#delModal"><i class="fa fa-trash-alt"></i></button>
+			              </div>
+			              
+			            </div>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			
+			<!-- Novo FILA -->
+			<a href="#" class="float btn-NewModal" data-toggle="modal" data-target="#modalNovo" onclick="stopReload()"><i class="fa fa-plus my-float"></i></a>
+			
+			<!-- Toast -->
+			<div style="position: absolute; top: 70px; right: 50px; width: 200px;">
+				<div role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="false">
+				  <div class="toast-header">
+				    <strong class="mr-auto" th:text="#{reception.Loading}"></strong>
+				    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+				      <span aria-hidden="true">&times;</span>
+				    </button>
+				    
+				  </div>
+				  <div class="toast-body">
+					<div class="d-flex justify-content-around">
+						<div th:text="#{reception.wait}"></div>			  
+					  	<div class="spinner-border text-dark"></div>
+				  	</div>
+				  </div>
+				</div>
+			</div>
+			
+			<!-- Modal Confirm Del -->
+			<div class="modal" role="dialog" id="delModalA">
+			  <div class="modal-dialog" role="document" style="margin-top: 35px;">
+			    <div class="modal-content" style="background: lightcoral;">
+			      <div class="modal-header">
+			        <h5 class="modal-title"th:text="#{reception.delete.delete}"></h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			      	<div th:text="#{reception.delete.warning}"></div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{reception.delete.cancel}"></button>
+<!-- 			        <div id="asdfasd" th:field="${asd}"></div> -->
+<!-- 					<form action="#" th:action="@{/recepcao/queueElement/cancel(id=${asd})}"> -->
+					    <button class="btn btn-danger" type="submit" value="Delete Fila" id="btnDelQE" th:text="#{reception.delete.confirm}"></button>  
+<!-- 					</form> -->
+			     </div>
+			   </div>
+			  </div>
+	    	</div>
+		    
+		    <!-- Modal Confirm Save -->
+			<div class="modal" role="dialog" id="SaveModal">
+			  <div class="modal-dialog" role="document" style="margin-top: 35px;">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" th:text="#{reception.save.warning1}"></h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			      	<div th:text="#{reception.save.warning2}"></div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{reception.save.cancel}"></button>
+<!-- 					<form action="#"> -->
+					    <button class="btn btn-success" type="submit" value="Delete Fila" id="btnSaveQE" th:text="#{reception.save.confirm}"></button>  
+<!-- 					</form> -->
+			     </div>
+			   </div>
+			  </div>
+	    	</div>
+
+	        <!-- MODAL NOVA FILA -->
+			<div class="modal fade bd-example-modal-lg" id="modalNovo">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      <div class="card">
+			        <div class="card-body text-center">
+			          <h5 class="card-title titulo" th:text="#{reception.add.addNew}"></h5>
+					  <form action="#" th:action="@{/queueElement/create}" th:object="${queueElement}" method="post">
+			          	<div class="card-body">
+			            	<div class="btn-group btn-group-toggle" data-toggle="buttons">
+								<button class="btn btn-outline-secondary active" onclick="changeImg('Convencional')">
+									<input type="radio" th:field="${queueElement.hasPriority}" th:value="0" />
+									<p class="card-text" th:text="#{reception.add.NonPreferential}"></p>
+								</button>
+								<button class="btn btn-outline-primary" onclick="changeImg('Preferencial')">
+										<input type="radio" th:field="${queueElement.hasPriority}" th:value="1"/>
+									<p class="card-text" th:text="#{reception.add.Preferential}"></p>
+								</button>
+							</div>
+						</div>
+						<div class="mb-2">
+				            <img id="img" th:src="@{/img/line.png}">
+						</div>
+						<div class="input">
+							<div class="form-row">
+								<div class="col" id="clientName" >
+									<input type="text" class="form-control" th:placeholder="#{reception.add.name}" name="name" th:field="${queueElement.name}" required min="1"  maxlength="15">
+								</div>
+								<div class="col">
+									<input type="text" class="form-control" th:placeholder="#{reception.add.phoneNumber}" th:field="${queueElement.phoneNumber}" name="phoneNumber" pattern="{11,14}" id="clientPhone">
+								</div>
+							</div>
+						</div>
+						
+						<div class="form-check form-check-inline mt-3">
+						  <input class="form-check-input" type="checkbox" id="phoneCheck" onclick="onClickCheckbox()">
+						  <label class="form-check-label" for="phoneCheck" th:text="#{reception.add.phoneNotInformed}"></label>
+						</div>
+			          
+						<div class="mt-4 mb-4">
+							<h5 class="card-title titulo" th:text="#{reception.add.numberOfSeats}"></h5>
+							<div class="qty mt-1 col-12">
+								<div class="col-2 btn btn-primary rounded-circle btn-lg minus" style="cursor:pointer; min-width: 0;"><i class="fa fa-minus"></i></div>
+								<input class="col-4 count qty form-control" type="number" name="qty" id="chairsNumberOnTableNew" th:field="${queueElement.chairsQuantityAsked}" required/>
+								<div class="col-2 btn btn-primary rounded-circle btn-lg plus" style="cursor:pointer; min-width: 0;"><i class="fa fa-plus"></i></div>
+							</div>
+						</div>
+				          
+						<div class="save float-right mt-2">
+							<p><input class="btn btn-success ml-1" type="submit" th:value="#{reception.add.confirmAdd}"/></p>
+<!-- 							<button class="btn btn-success" id="createQueue"><i class="fa fa-save"></i></button> -->
+						</div>
+						<div class="save float-right mt-2">
+							<button class="btn btn-danger" data-dismiss="modal"><i class="fas fa-times"></i></button>
+						</div>
+			          </form>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+	</div>
+</body>
+</html>

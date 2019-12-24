@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org/" xmlns="http://www.w3.org/1999/xhtml" layout:decorator="layouts/default">
+<body>
+	<div id="page" layout:fragment="content">
+<!-- 		<div class='page-link'> -->
+<!-- 			<a class="btn btn-success" th:href="@{|/home|}" th:text="Home"></a> -->
+<!-- 		</div> -->
+
+		<header class="text-center">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-9 mx-auto">
+						<h1 class="mb-5" th:text="#{error.unknown.error}"></h1>
+						<h1 class="mb-5" th:text="#{error.unknown.accessDenied}"></h1>
+					</div>
+				</div>
+			</div>
+		</header>
+</body>
+</html>

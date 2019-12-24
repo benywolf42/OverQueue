@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org/" xmlns="http://www.w3.org/1999/xhtml" layout:decorator="layouts/default">
+<body>
+	<div id="uploadPage" layout:fragment="content">
+	<div class="card">
+	  <h5 class="card-header" th:text="#{admin.restaurantMenu.menuUpload}"></h5>
+	  <div class="card-body">
+	    <h5 class="card-title" th:text="#{admin.restaurantMenu.selectPDF}"></h5>
+	    <p class="card-text" th:text="#{admin.restaurantMenu.pdfTakeNote}"></p>
+	    <form method="post" enctype="multipart/form-data" action="/admin/upload">
+	      <input type="file" name="file">
+	      <input type="submit" value="Upload"></input>
+  	 </form>
+  </div>
+</div>
+	
+	<div th:if="${param.success}">
+		<h5 class="mt-5 animated scrollanimation fadeIn slower" th:text="#{success}">Sucesso</h5>
+	</div>
+	
+	<div th:if="${param.error}">
+		<h5 class="mt-5 animated scrollanimation fadeIn slower" th:text="#{error}"></h5>
+	</div>
+</body>
+</html>

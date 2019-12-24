@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Exemplo de envio de SMS</title>
+</head>
+<body>
+	<form name="enviarSMS" th:action="@{/enviarSMS}" th:object="${sms}" method="POST">
+		<input type="number" th:field="*{phoneNumber}" name="phoneNumber" placeholder="Telefone">
+		<input type="texto" th:field="*{messageContent}" name="messageContent" placeholder="Mensagem">
+		<button type="submit">Enviar SMS</button>
+	</form>
+	<h1>Enviar SMS</h1>
+</body>
+</html>

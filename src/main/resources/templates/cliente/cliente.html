@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml" layout:decorator="layouts/default">
+<body>
+	<div id="clientPage" layout:fragment="content">
+
+		<!-- Masthead -->
+		<header class="mt-5 text-center text-dark animated scrollanimation fadeIn slower">
+			<div class="overlay" style="opacity: 1; overflow: hidden; background-color: rgb(248, 249, 250);">
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-9 mx-auto mt-5">
+						<h1 class="mb-5">
+							<span th:text="#{client.welcome}"></span>
+							<span th:text="${client.name}"></span>
+						</h1>
+						<h1 class="mb-5">
+							<span th:text="#{client.queuePlace}" th:class="${pendingQueueElement.hasReceivedSms} == 2 ? 'd-none' : ''"></span><span th:text="${pendingQueueElement.position}"  th:class="${pendingQueueElement.hasReceivedSms} == 2 ? 'd-none' : ''"></span>
+							<span th:text="#{client.tableIsReady}" th:class="${pendingQueueElement.hasReceivedSms} == 2 ? '' : 'd-none'">Sua mesa está pronta, compareça a recepção!</span>
+						</h1>
+						<h5 class="mb-5" th:class="${pendingQueueElement.hasReceivedSms} == 2 ? 'd-none' : ''">
+							<span th:text="#{client.queueFor}"></span><span th:text="${' ' + pendingQueueElement.chairsQuantityAsked}" class="mr-1"></span><span th:text="#{client.numberOfPeople}"></span><br><br>
+							<div class="mb-5">
+								<span th:text="#{client.avgWaitTime}" th:class="${pendingQueueElement.estimatedTimeForAttendance} == null? 'd-none' : ''"></span> <span th:text="${' ' + pendingQueueElement.estimatedTimeForAttendance}" th:class="${pendingQueueElement.estimatedTimeForAttendance} == null? 'd-none' : ''"></span>
+								<span th:class="${pendingQueueElement.estimatedTimeForAttendance} == null? '' : 'd-none'" th:text="#{client.unavailableTime}"></span>
+							</div>
+						</h5>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<!-- Icons Grid -->
+		<section class="features-icons bg-light text-center mt-5">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-4">
+						<div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+							<div class="features-icons-icon d-flex">
+								<a href="/download/cardapio.pdf" class="m-auto text-secondary"><i class="fas fa-utensils"></i></a>
+							</div>
+							<h3 th:text="#{client.menu}"></h3>
+							<p class="lead mb-0 text-justify" th:text="#{client.menuIcon}"></p>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class="features-icons-item mx-auto mb-0 mb-lg-3">
+							<div class="features-icons-icon d-flex">
+								<i class="far fa-comment-alt m-auto text-primary"></i>
+							</div>
+							<h3 th:text="#{client.call}"></h3>
+							<p class="lead mb-0 text-justify" th:text="#{client.callInstruction}"></p>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class="features-icons-item mx-auto mb-0 mb-lg-3">
+							<div class="features-icons-icon d-flex">
+								<a data-toggle="modal" data-target="#ModalCancelamento" class="m-auto text-danger" onclick="stopReload()"><i class="fas fa-minus-circle"></i></a>
+							</div>
+							<h3 th:text="#{client.cancellation}"></h3>
+							<p class="lead mb-0 text-justify" th:text="#{client.cancellationInstruction}"></p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Modal -->
+				<div class="modal fade" id="ModalCancelamento" tabindex="-1" role="dialog" aria-labelledby="Cancelamento" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title text-center" id="Cancelamento" th:text="#{client.cancellation}"></h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<span th:text="#{client.confirmCancellation}"></span>
+							</div>
+							<form action="#" th:action="@{/client/queueElement/cancel/(id=${pendingQueueElement.id})}" th:object="${pendingQueueElement}" method="POST">
+								<div class="modal-footer">
+									<input type="hidden" th:field="*{id}" class="form-control form-control-lg" />
+									<button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{client.cancel}"></button>
+									<button type="submit" class="btn btn-danger" th:text="#{client.proceed}"></button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+		</section>
+</body>
+
+</html>
